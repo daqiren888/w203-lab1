@@ -1,0 +1,86 @@
+---
+title: 'Lab 1: Question 1 - Are Democratic voters older or younger than Republican
+  voters in 2020?'
+author: " Da Qi Ren"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r load packages, echo=TRUE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2) 
+library(tidyverse) # if you want more, but still core, toolkit
+library(haven)
+library(magrittr)
+library(patchwork)
+library(ggpubr)
+library(rstatix)
+library(nortest)
+library(splitstackshape)
+
+```
+
+```{r load and clean data, echo=FALSE, warning=TRUE, message=FALSE}
+anes <- read_dta("anes_timeseries_2020_stata_20210211.dta")
+data <- subset(anes, V201507x>18 & V201018<=2 & V201018>0, select = c('V201507x','V201018'))
+data <- data %>%
+ 
+  mutate(
+    age = V201507x,
+    party_of_registration = case_when(
+      V201018 == 1 ~ 'Democratic Party',
+      V201018 == 2 ~ 'Republican Party'
+    )
+  )
+
+```
+
+ 
+```{r}
+require(webr)
+library(gridExtra)
+library(expss)
+
+
+data[,'age']<-cut(data$V201507x, breaks = c(-Inf,25,35,45,55,65,75,Inf), labels=c(1,2, 3,4,5,6,7))
+
+#view.table(df)
+data%>%
+  group_by(age, V201018)%>%
+  summarise(Counts=n())
+```
+ 
+
+1	100	48	
+2	276 144		
+3	296	184		
+4	258	179		
+5	356	271	
+6	327	276		
+7	189	163	
+
+```{r}
+
+
+#testor = rbind(c(1780,3087,843,2134),+  c(64,95,40,85)); testor
+
+testor = rbind(c(100,48),+ c(267,144),+ c(296,184),+ c(258,179),+ c(365,271), +c(327,276), +c(189,163)); testor
+chi2 = chisq.test(testor,correct=F); chi2
+chi2$expected
+
+
+```
+
+
+
+
+
+
+
+
+
+
+## Test, results and interpretation
+<!-- What are the results of your test? --> 
+<!-- What do the results of this test mean? What is the practical significance? --> 
